@@ -1,7 +1,7 @@
 {
   "expo": {
     "name": "WorkHardTravelHardApp",
-    "slug": "WorkHardTravelHardApp",
+    "slug": "to-do",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
@@ -21,10 +21,17 @@
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#ffffff"
-      }
+      },
+      "package": "com.cjddnjfql.todo"
     },
     "web": {
       "favicon": "./assets/favicon.png"
-    }
+    },
+    "extra": {
+      "eas": {
+        "projectId": "cc94a849-42d7-4355-8ef0-a4dafbab27e7"
+      }
+    },
+    "owner": "cjddnjfql"
   }
 }

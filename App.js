@@ -27,7 +27,7 @@ const STORAGE_WORKING = '@working';
 export default function App() {
   const [mode, setMode] = useState('dark');
   const [text, setText] = useState('');
-  const [toDos, setToDos] = useState({});
+  const [toDos, setToDos] = useState(null);
   const [working, setWorking] = useState(true);
   const [loading, setLoadloading] = useState(true);
   const [modal, setModal] = useState(false);
@@ -40,6 +40,7 @@ export default function App() {
   };
   const travel = () => {
     setWorking(false);
+    saveWorking(false);
   };
   const onChangeText = (payload) => setText(payload);
   const onChangeModalText = (payload) => setModalText(payload);
@@ -183,59 +184,63 @@ export default function App() {
           style={styles.input}
         />
         <ScrollView showsVerticalScrollIndicator>
-          {Object.keys(toDos).map((key) =>
-            toDos[key].working === working ? (
-              <View
-                style={{ ...styles.toDo, backgroundColor: theme[mode].toDoBg }}
-                key={key}
-              >
-                <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-                  <Checkbox
-                    style={{ color: theme[mode].color, marginRight: 10 }}
-                    value={toDos[key].checked}
-                    onValueChange={() => handleChecked(key)}
-                  />
-                  <Text
-                    style={{
-                      ...styles.toDoText,
-                      color: theme[mode].color,
-                      textDecorationLine: toDos[key].checked
-                        ? 'line-through'
-                        : null,
-                    }}
-                  >
-                    {toDos[key].text}
-                  </Text>
-                </View>
-                <View style={styles.menus}>
-                  {!toDos[key].checked && (
-                    <TouchableOpacity
-                      onPress={() => {
-                        setModalText('');
-                        setModal(true);
-                        setEditKey(key);
+          {toDos &&
+            Object.keys(toDos).map((key) =>
+              toDos[key].working === working ? (
+                <View
+                  style={{
+                    ...styles.toDo,
+                    backgroundColor: theme[mode].toDoBg,
+                  }}
+                  key={key}
+                >
+                  <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+                    <Checkbox
+                      style={{ color: theme[mode].color, marginRight: 10 }}
+                      value={toDos[key].checked}
+                      onValueChange={() => handleChecked(key)}
+                    />
+                    <Text
+                      style={{
+                        ...styles.toDoText,
+                        color: theme[mode].color,
+                        textDecorationLine: toDos[key].checked
+                          ? 'line-through'
+                          : null,
                       }}
                     >
-                      <FontAwesome5
-                        name="edit"
-                        size={20}
-                        color={theme[mode].color}
-                      />
-                    </TouchableOpacity>
-                  )}
-                  <TouchableOpacity onPress={() => deleteToDo(key)}>
-                    <Text>
-                      <Fontisto
-                        name="trash"
-                        size={20}
-                        color={theme[mode].color}
-                      />
+                      {toDos[key].text}
                     </Text>
-                  </TouchableOpacity>
+                  </View>
+                  <View style={styles.menus}>
+                    {!toDos[key].checked && (
+                      <TouchableOpacity
+                        onPress={() => {
+                          setModalText('');
+                          setModal(true);
+                          setEditKey(key);
+                        }}
+                      >
+                        <FontAwesome5
+                          name="edit"
+                          size={20}
+                          color={theme[mode].color}
+                        />
+                      </TouchableOpacity>
+                    )}
+                    <TouchableOpacity onPress={() => deleteToDo(key)}>
+                      <Text>
+                        <Fontisto
+                          name="trash"
+                          size={20}
+                          color={theme[mode].color}
+                        />
+                      </Text>
+                    </TouchableOpacity>
+                  </View>
                 </View>
-              </View>
-            ) : null,
-          )}
+              ) : null,
+            )}
         </ScrollView>
         <Button onPress={handleDeleteAll} title="전부 삭제" color="grey" />
       </View>
