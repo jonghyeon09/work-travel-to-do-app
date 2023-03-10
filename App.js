@@ -23,9 +23,10 @@ const { height: SCREEN_HEIGHT } = Dimensions.get('window');
 
 const STORAGE_KEY = '@toDos';
 const STORAGE_WORKING = '@working';
+const STORAGE_MODE = '@mode';
 
 export default function App() {
-  const [mode, setMode] = useState('dark');
+  const [mode, setMode] = useState('light');
   const [text, setText] = useState('');
   const [toDos, setToDos] = useState(null);
   const [working, setWorking] = useState(true);
@@ -50,6 +51,9 @@ export default function App() {
   const saveWorking = async (toSave) => {
     await AsyncStorage.setItem(STORAGE_WORKING, JSON.stringify(toSave));
   };
+  const saveMode = async (toSave) => {
+    await AsyncStorage.setItem(STORAGE_MODE, JSON.stringify(toSave));
+  };
   const loadToDos = async () => {
     const jsonValue = await AsyncStorage.getItem(STORAGE_KEY);
     setToDos(JSON.parse(jsonValue));
@@ -58,12 +62,18 @@ export default function App() {
     const jsonValue = await AsyncStorage.getItem(STORAGE_WORKING);
     setWorking(JSON.parse(jsonValue));
   };
+  const loadMode = async () => {
+    const value = await AsyncStorage.getItem(STORAGE_MODE);
+
+    if (value) {
+      setMode(JSON.parse(value));
+    }
+  };
 
   useEffect(() => {
-    loadToDos().then(() => setLoadloading(false));
-  }, []);
-  useEffect(() => {
+    loadMode();
     loadWorking();
+    loadToDos().then(() => setLoadloading(false));
   }, []);
 
   const addToDo = async () => {
@@ -94,8 +104,14 @@ export default function App() {
     ]);
   };
   const onChangeMode = () => {
-    if (mode === 'light') setMode('dark');
-    if (mode === 'dark') setMode('light');
+    if (mode === 'light') {
+      setMode('dark');
+      saveMode('dark');
+    }
+    if (mode === 'dark') {
+      setMode('light');
+      saveMode('light');
+    }
   };
   const handleDeleteAll = () => {
     const newToDos = { ...toDos };
@@ -134,7 +150,12 @@ export default function App() {
   };
 
   return (
-    <View style={{ ...styles.container, backgroundColor: theme[mode].bg }}>
+    <View
+      style={{
+        ...styles.container,
+        backgroundColor: !loading ? theme[mode].bg : null,
+      }}
+    >
       <StatusBar style={mode === 'light' ? 'dark' : 'light'} />
       {loading && (
         <ActivityIndicator
